@@ -6,7 +6,7 @@ using namespace std;
 // stat report array
 int report[6] = {0};
 
-// structer in
+// structer
 struct company
 {
     string name;

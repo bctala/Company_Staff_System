@@ -23,7 +23,7 @@ string bName = "Data_backup.txt"; // backup secondary file where the changes wil
 string oName = "New_Data.txt";
 int NumOfEmployees = 0; // current num of employees
 const int limit = 100;
-company employees[100]; // the array of structer
+company employees[limit]; // the array of structer
 
 // adding the file data
 void LoadData(string fName, company employees[])
@@ -55,12 +55,33 @@ void LoadData(string fName, company employees[])
 }
 
 // copy to backup
+void backup(string fName, string bName)
+{
+    ofstream To;
+    ifstream From;
+    To.open(bName, ios::out);
+    From.open(fName, ios::in);
+    string line;
+    if (To.is_open() && From.is_open())
+    {
+        do
+        {
+            getline(From, line); // read from original file
+            To << line << endl;  // write to backup file
+        } while (!From.eof());
+        To.close();
+        From.close();
+        cout << "File is Backed up seccefully \n";
+    }
+    else
+        cout << "Error: failed to open or some files does not exist \n";
+}
 
 // save in new file
 void saveData(string oName, company employees[])
 {
     ofstream outputfile;
-    outputfile.open("oName", ios::out);
+    outputfile.open(oName, ios::out);
     if (outputfile.is_open() == true)
     {
         for (int i = 0; i < NumOfEmployees; i++)
@@ -143,11 +164,11 @@ void add(company employees[], int &NumOfEmployees)
     report[1]++;
     string id;
     cout << "Enter the new staff information: " << endl;
-    cout << "ID:(5 integers only) ";
+    cout << "ID (5 integers only): ";
     cin >> id;
     while (test(employees, id, NumOfEmployees) >= 0)
     {
-        cout << "This was used, try another one";
+        cout << "This was used, try another one:    ";
         cin >> id;
     }
     employees[NumOfEmployees].id = id;
@@ -208,14 +229,61 @@ void update(company employees[], string id, int NumOfEmployees)
         cout << "There is no staff,try adding befor updating";
 }
 
+// sort
+void sort(company employees[], int NumOfEmployees)
+{
+    report[4]++;
+    company temp;
+    if (NumOfEmployees < 2)
+        cout << " There is nothing to be sort !! ";
+    else
+    {
+        for (int i = 0; i < NumOfEmployees - 1; i++)
+            for (int j = 0; j < NumOfEmployees - 1; j++)
+                if (employees[j].salary > employees[j + 1].salary)
+                {
+                    temp.salary = employees[j].salary;
+                    employees[j].salary = employees[j + 1].salary;
+                    employees[j + 1].salary = temp.salary;
+                }
+        cout << "Recored has been sorted by salary successfully!";
+    }
+}
+
+// report (needs re-numbering)
+void statical_report()
+{
+    ofstream StatReport;
+    string Rname = "Statical_Report.txt";
+    time_t t;
+    t = time(NULL);
+    char *time = ctime(&t);
+    StatReport.open(Rname.c_str() /* the use ? */, ios::app);
+    if (StatReport.is_open())
+    {
+        StatReport << endl;
+        StatReport << "The user ask to add data: " << report[0] << " times" << endl;
+        StatReport << "The user ask to search data: " << report[1] << " times" << endl;
+        StatReport << "The user ask to add Update data: " << report[2] << " times" << endl;
+        StatReport << "The user ask to delete data: " << report[3] << " times" << endl;
+        StatReport << "The user ask to sort data: " << report[4] << " times" << endl;
+        StatReport << "The user ask to display data: " << report[5] << " times" << endl;
+        StatReport << "The Date of Last update: " << time << endl;
+        StatReport.close();
+    }
+    else
+        cout << "Failed To Save Last Modifications!\n";
+}
+
 int main()
 {
     int limit;
     welcome();
     cout << "Enter the maximum number of staff: ";
-    cin >> limit;
+    cin >> limit; // why ??
     company employees[limit];
     LoadData(fName, employees);
+    backup(fName, bName);
     string id;
     int service, z;
     do
@@ -255,6 +323,9 @@ int main()
             cout << "\nEnter the employee id who you want to update their job or salary: ";
             cin >> id;
             update(employees, id, NumOfEmployees);
+            break;
+        case 5:
+            sort(employees, NumOfEmployees);
             break;
         case 6:
             displayData(employees);

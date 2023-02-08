@@ -20,15 +20,16 @@ struct company
 // declaring files and some values
 string fName = "Data.txt";
 string bName = "Data_backup.txt"; // backup secondary file where the changes will be saved
-int NumOfEmployees = 0;           // current num of employees
+string oName = "New_Data.txt";
+int NumOfEmployees = 0; // current num of employees
 const int limit = 100;
 company employees[100]; // the array of structer
 
 // adding the file data
-void LoadData(company employees[])
+void LoadData(string fName, company employees[])
 {
     ifstream load; // load is the object
-    load.open("Data.txt");
+    load.open(fName);
     if (load.is_open() == true)
     {
         int counter = 0;
@@ -56,6 +57,27 @@ void LoadData(company employees[])
 // copy to backup
 
 // save in new file
+void saveData(string oName, company employees[])
+{
+    ofstream outputfile;
+    outputfile.open("oName", ios::out);
+    if (outputfile.is_open() == true)
+    {
+        for (int i = 0; i < NumOfEmployees; i++)
+        {
+            outputfile << employees[i].name << endl;
+            outputfile << employees[i].id << endl;
+            outputfile << employees[i].age << endl;
+            outputfile << employees[i].gender << endl;
+            outputfile << employees[i].job << endl;
+            outputfile << employees[i].salary << endl;
+        }
+        outputfile.close();
+        cout << "\nData Saved Successfully.\n";
+    }
+    else
+        cout << "\nFailed,Please Try Again.\n";
+}
 
 // overloading test
 
@@ -193,7 +215,7 @@ int main()
     cout << "Enter the maximum number of staff: ";
     cin >> limit;
     company employees[limit];
-    LoadData(employees);
+    LoadData(fName, employees);
     string id;
     int service, z;
     do
@@ -242,6 +264,6 @@ int main()
         }
     } while (test());
     // statical_report ();
-    // DatatoFile(player);
+    saveData(oName, employees);
     return 0;
 }

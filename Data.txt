@@ -1,0 +1,18 @@
+﻿Tala
+12345
+20
+Female
+Administrative Assistant
+123000
+Omar
+96375
+30
+Male
+Software Engineer
+23453
+Sara
+27418
+28
+Female
+Sales Manager.
+328463

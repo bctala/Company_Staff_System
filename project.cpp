@@ -22,7 +22,7 @@ string fName = "Data.txt";
 string bName = "Data_backup.txt"; // backup secondary file where the changes will be saved
 string oName = "New_Data.txt";
 int NumOfEmployees = 0; // current num of employees
-const int limit = 100;
+const int limit = 1000;
 company employees[limit]; // the array of structer
 
 // adding the file data
@@ -30,7 +30,7 @@ void LoadData(string fName, company employees[])
 {
     ifstream load; // load is the object
     load.open(fName);
-    if (load.is_open() == true)
+    if (load.is_open())
     {
         int counter = 0;
         while (!load.eof())
@@ -82,7 +82,7 @@ void saveData(string oName, company employees[])
 {
     ofstream outputfile;
     outputfile.open(oName, ios::out);
-    if (outputfile.is_open() == true)
+    if (outputfile.is_open())
     {
         for (int i = 0; i < NumOfEmployees; i++)
         {
@@ -168,7 +168,7 @@ void add(company employees[], int &NumOfEmployees)
     cin >> id;
     while (test(employees, id, NumOfEmployees) >= 0)
     {
-        cout << "This was used, try another one:    ";
+        cout << "This id was used, try another one: ";
         cin >> id;
     }
     employees[NumOfEmployees].id = id;
@@ -202,6 +202,29 @@ int search(company employees[], string id, int NumOfEmployees)
     return -1;
 }
 
+// delete
+void DeleteData(company employees[], string id, int &NumOfEmployees) // if id was not found
+{
+    report[5]++;
+    int index = -1;
+    if (NumOfEmployees > 0)
+    {
+        index = search(employees, id, NumOfEmployees);
+        report[1]--;
+        if (index != -1)
+        {
+            for (int i = index; i < NumOfEmployees - 1; i++)
+            {
+                employees[i] = employees[i + 1];
+            }
+            NumOfEmployees--;
+            cout << "The recored was deleted " << endl;
+        }
+    }
+    else
+        cout << " No record to delete ";
+}
+
 // updating info
 void update(company employees[], string id, int NumOfEmployees)
 {
@@ -210,7 +233,7 @@ void update(company employees[], string id, int NumOfEmployees)
     if (NumOfEmployees > 0)
     {
         index = search(employees, id, NumOfEmployees);
-        report[2]--;
+        report[1]--;
         if (index != -1)
         {
             cout << "The staff salary that was found at index: " << index << " is: " << employees[index].salary << endl;
@@ -220,7 +243,7 @@ void update(company employees[], string id, int NumOfEmployees)
             cout << "The staff job title that was found at index " << index << " is: " << employees[index].job << endl;
             cout << "Enter the new job title: ";
             cin >> employees[index].job;
-            cout << "The job title was updated successfully! ";
+            cout << "The job title was updated successfully! "; // add age
         }
         else
             cout << "ID was not found";
@@ -257,31 +280,31 @@ void statical_report()
     string Rname = "Statical_Report.txt";
     time_t t;
     t = time(NULL);
-    char *time = ctime(&t);
-    StatReport.open(Rname.c_str() /* the use ? */, ios::app);
+    char *time = ctime(&t); // search
+    StatReport.open(Rname /* the use ? */, ios::app);
     if (StatReport.is_open())
     {
         StatReport << endl;
-        StatReport << "The user ask to add data: " << report[0] << " times" << endl;
-        StatReport << "The user ask to search data: " << report[1] << " times" << endl;
-        StatReport << "The user ask to add Update data: " << report[2] << " times" << endl;
-        StatReport << "The user ask to delete data: " << report[3] << " times" << endl;
+        StatReport << "The user ask to add data: " << report[1] << " times" << endl;
+        StatReport << "The user ask to search data: " << report[2] << " times" << endl;
+        StatReport << "The user ask to add Update data: " << report[3] << " times" << endl;
+        StatReport << "The user ask to delete data: " << report[5] << " times" << endl;
         StatReport << "The user ask to sort data: " << report[4] << " times" << endl;
-        StatReport << "The user ask to display data: " << report[5] << " times" << endl;
+        StatReport << "The user ask to display data: " << report[0] << " times" << endl;
         StatReport << "The Date of Last update: " << time << endl;
         StatReport.close();
     }
     else
-        cout << "Failed To Save Last Modifications!\n";
+        cout << "Failed To Save Last Modifications!";
 }
 
 int main()
 {
-    int limit;
+    int limit_user;
     welcome();
     cout << "Enter the maximum number of staff: ";
-    cin >> limit; // why ??
-    company employees[limit];
+    cin >> limit_user;
+    company employees[limit_user];
     LoadData(fName, employees);
     backup(fName, bName);
     string id;
@@ -306,7 +329,7 @@ int main()
         case 2:
             cout << "\nEnter the employee id who you want to find: ";
             cin >> id;
-            z = search(employees, id, NumOfEmployees);
+            z = search(employees, id, NumOfEmployees); // no need for z
             if (z == -1)
                 break;
             else
@@ -324,6 +347,11 @@ int main()
             cin >> id;
             update(employees, id, NumOfEmployees);
             break;
+        case 4:
+            cout << "Enter the id for the player to delete it: ";
+            cin >> id;
+            DeleteData(employees, id, NumOfEmployees);
+            break;
         case 5:
             sort(employees, NumOfEmployees);
             break;
@@ -334,7 +362,7 @@ int main()
             cout << "\nWrong input, please try again" << endl;
         }
     } while (test());
-    // statical_report ();
+    statical_report();
     saveData(oName, employees);
     return 0;
 }

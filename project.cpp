@@ -1,31 +1,39 @@
+// STAFF SYSTEM
+// Tala Almulla
+// Sara Sultan Alzahrani
+// Basmah aljishi
+// Roaa alturaif
+// Rawan Mohammed sahari
+// Nada alharbi
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <time.h>
 using namespace std;
-// stat report array
+// Report array for the statistical report
 int report[6] = {0};
 
-// structer
+// Structer
 struct company
 {
     string name;
     string id;
     int age;
     string gender;
-    string job;
     int salary;
 };
 
-// declaring files and some values
-string fName = "Data.txt";
-string bName = "Data_backup.txt"; // backup secondary file where the changes will be saved
-string oName = "New_Data.txt";
-int NumOfEmployees = 0; // current num of employees
-const int limit = 1000;
-company employees[limit]; // the array of structer
+// Declaring file names and some values
+string fName = "Data.txt";            // For input file
+string bName = "Data_backup.txt";     // For a backup output file
+string oName = "New_Data.txt";        // For an output file where the new data will be saved
+string Rname = "Statical_Report.txt"; // For the stat report file
+int NumOfEmployees = 0;               // current number of employees
+const int limit = 100;                // array limit
+company employees[limit];             // Array of struct
 
-// adding the file data
+// Input file
 void LoadData(string fName, company employees[])
 {
     ifstream load; // load is the object
@@ -40,7 +48,6 @@ void LoadData(string fName, company employees[])
             load >> employees[counter].age;
             load.ignore(1);
             getline(load, employees[counter].gender);
-            getline(load, employees[counter].job);
             load >> employees[counter].salary;
             load.ignore(1);
             counter++;
@@ -50,11 +57,11 @@ void LoadData(string fName, company employees[])
     }
     else
     {
-        cout << "Failed -- or File is not exist\n";
+        cout << "Failed or File is not exist" << endl;
     }
 }
 
-// copy to backup
+// Copy the data into a backup file
 void backup(string fName, string bName)
 {
     ofstream To;
@@ -71,13 +78,13 @@ void backup(string fName, string bName)
         } while (!From.eof());
         To.close();
         From.close();
-        cout << "File is Backed up seccefully \n";
+        cout << "File is Backed up seccefully" << endl;
     }
     else
-        cout << "Error: failed to open or some files does not exist \n";
+        cout << "Error: failed to open or some files does not exist" << endl;
 }
 
-// save in new file
+// Save the new data into a file
 void saveData(string oName, company employees[])
 {
     ofstream outputfile;
@@ -90,19 +97,42 @@ void saveData(string oName, company employees[])
             outputfile << employees[i].id << endl;
             outputfile << employees[i].age << endl;
             outputfile << employees[i].gender << endl;
-            outputfile << employees[i].job << endl;
             outputfile << employees[i].salary << endl;
         }
         outputfile.close();
-        cout << "\nData Saved Successfully.\n";
+        cout << "\nData Saved Successfully,Have a nice day\n";
     }
     else
         cout << "\nFailed,Please Try Again.\n";
 }
 
-// overloading test
+// Stat report (needs re-numbering)
+void statical_report()
+{
+    ofstream StatReport;
+    time_t t;
+    t = time(NULL); // return the date and time
+    char *time = ctime(&t);
+    StatReport.open(Rname, ios::app);
+    if (StatReport.is_open())
+    {
+        StatReport << endl;
+        StatReport << "The user asked to display data: " << report[0] << " times" << endl;
+        StatReport << "The user asked to add data: " << report[1] << " times" << endl;
+        StatReport << "The user asked to search for data: " << report[2] << " times" << endl;
+        StatReport << "The user asked to update data: " << report[3] << " times" << endl;
+        StatReport << "The user asked to sort data: " << report[4] << " times" << endl;
+        StatReport << "The user asked to delete data: " << report[5] << " times" << endl;
+        StatReport << "The Date and time of the last update: " << time << endl;
+        StatReport.close();
+    }
+    else
+        cout << "Failed to save the last modified data";
+}
 
-int test(company employees[], string id, int NumOfEmployees) // for the add function
+// Overloading "test" for add function and menu
+
+int test(company employees[], string id, int NumOfEmployees)
 {
     for (int i = 0; i < NumOfEmployees; i++)
         if (employees[i].id == id)
@@ -110,7 +140,7 @@ int test(company employees[], string id, int NumOfEmployees) // for the add func
     return -1;
 }
 bool test()
-{ // for exiting the menu
+{
     char result;
     cout << "\nDo you want to use another service? (enter Y for yes and N for no): ";
     cin >> result;
@@ -120,21 +150,21 @@ bool test()
         return true;
     else
     {
-        cout << "wrong input,please try again";
-        return test(); // check if it will work
+        cout << "Wrong input,please try again";
+        return test(); // recursion so the user can enter the value again
     }
 }
 
-// welcome
+// Welcome message
 void welcome()
 {
     cout << "\n\t\t Welcome to the company information system" << endl;
-    cout << "Choose your preferred service from the menu and data will be automatically saved" << endl;
+    cout << "Choose your preferred service from the menu and data will be automatically saved!" << endl;
     cout << "---------------------------------------------------------------------------------" << endl;
     cout << endl;
 }
 
-// menu
+// Menu display
 void menu()
 {
     cout << "Enter your preferred service number: " << endl;
@@ -143,22 +173,21 @@ void menu()
          << "6- Display all employees \n And enter -1 if you're done! " << endl;
 }
 
-// Display the data
+// Display data
 void displayData(company employees[])
 {
     report[0]++;
     for (int i = 0; i < NumOfEmployees; i++)
     {
-        cout << "Name: " << employees[i].name << "\n";
-        cout << "ID: " << employees[i].id << "\n";
-        cout << "Age: " << employees[i].age << "\n";
-        cout << "Gender: " << employees[i].gender << "\n";
-        cout << "Job: " << employees[i].job << "\n";
-        cout << "Salary: " << employees[i].salary << "\n";
+        cout << "Name: " << employees[i].name << endl;
+        cout << "ID: " << employees[i].id << endl;
+        cout << "Age: " << employees[i].age << endl;
+        cout << "Gender: " << employees[i].gender << endl;
+        cout << "Salary: " << employees[i].salary << endl;
     }
 }
 
-// adding a staff
+// Adding a staff
 void add(company employees[], int &NumOfEmployees)
 {
     report[1]++;
@@ -178,15 +207,13 @@ void add(company employees[], int &NumOfEmployees)
     cin >> employees[NumOfEmployees].age;
     cout << "Enter gender: ";
     cin >> employees[NumOfEmployees].gender;
-    cout << "Enter job: ";
-    cin >> employees[NumOfEmployees].job;
     cout << "Enter salary: ";
     cin >> employees[NumOfEmployees].salary;
     cout << "staff: " << NumOfEmployees + 1 << endl;
     NumOfEmployees++;
 }
 
-// search for staff
+// Search for staff
 int search(company employees[], string id, int NumOfEmployees)
 {
     report[2]++;
@@ -198,34 +225,11 @@ int search(company employees[], string id, int NumOfEmployees)
         return -1;
     }
     else
-        cout << "There is no staff,try adding befor searching" << endl;
+        cout << "There is no staff,try adding befor searching!" << endl;
     return -1;
 }
 
-// delete
-void DeleteData(company employees[], string id, int &NumOfEmployees) // if id was not found
-{
-    report[5]++;
-    int index = -1;
-    if (NumOfEmployees > 0)
-    {
-        index = search(employees, id, NumOfEmployees);
-        report[1]--;
-        if (index != -1)
-        {
-            for (int i = index; i < NumOfEmployees - 1; i++)
-            {
-                employees[i] = employees[i + 1];
-            }
-            NumOfEmployees--;
-            cout << "The recored was deleted " << endl;
-        }
-    }
-    else
-        cout << " No record to delete ";
-}
-
-// updating info
+// Updating info
 void update(company employees[], string id, int NumOfEmployees)
 {
     report[3]++;
@@ -233,17 +237,17 @@ void update(company employees[], string id, int NumOfEmployees)
     if (NumOfEmployees > 0)
     {
         index = search(employees, id, NumOfEmployees);
-        report[1]--;
+        report[2]--;
         if (index != -1)
         {
             cout << "The staff salary that was found at index: " << index << " is: " << employees[index].salary << endl;
             cout << "Enter the new salary: ";
             cin >> employees[index].salary;
             cout << "The salary was updated successfully! ";
-            cout << "The staff job title that was found at index " << index << " is: " << employees[index].job << endl;
-            cout << "Enter the new job title: ";
-            cin >> employees[index].job;
-            cout << "The job title was updated successfully! "; // add age
+            cout << "The staff age that was found at index " << index << " is: " << employees[index].age << endl;
+            cout << "Enter the new age: ";
+            cin >> employees[index].age;
+            cout << "The age was updated successfully! ";
         }
         else
             cout << "ID was not found";
@@ -252,13 +256,13 @@ void update(company employees[], string id, int NumOfEmployees)
         cout << "There is no staff,try adding befor updating";
 }
 
-// sort
+// Sort
 void sort(company employees[], int NumOfEmployees)
 {
     report[4]++;
     company temp;
     if (NumOfEmployees < 2)
-        cout << " There is nothing to be sort !! ";
+        cout << " There is nothing to be sorted! ";
     else
     {
         for (int i = 0; i < NumOfEmployees - 1; i++)
@@ -273,29 +277,29 @@ void sort(company employees[], int NumOfEmployees)
     }
 }
 
-// report (needs re-numbering)
-void statical_report()
+// Delete
+void DeleteData(company employees[], string id, int &NumOfEmployees)
 {
-    ofstream StatReport;
-    string Rname = "Statical_Report.txt";
-    time_t t;
-    t = time(NULL);
-    char *time = ctime(&t); // search
-    StatReport.open(Rname /* the use ? */, ios::app);
-    if (StatReport.is_open())
+    report[5]++;
+    int index = -1;
+    if (NumOfEmployees > 0)
     {
-        StatReport << endl;
-        StatReport << "The user ask to add data: " << report[1] << " times" << endl;
-        StatReport << "The user ask to search data: " << report[2] << " times" << endl;
-        StatReport << "The user ask to add Update data: " << report[3] << " times" << endl;
-        StatReport << "The user ask to delete data: " << report[5] << " times" << endl;
-        StatReport << "The user ask to sort data: " << report[4] << " times" << endl;
-        StatReport << "The user ask to display data: " << report[0] << " times" << endl;
-        StatReport << "The Date of Last update: " << time << endl;
-        StatReport.close();
+        index = search(employees, id, NumOfEmployees);
+        report[2]--;
+        if (index != -1)
+        {
+            for (int i = index; i < NumOfEmployees - 1; i++)
+            {
+                employees[i] = employees[i + 1];
+            }
+            NumOfEmployees--;
+            cout << "The recored was deleted " << endl;
+        }
+        else
+            cout << "ID was not found" << endl;
     }
     else
-        cout << "Failed To Save Last Modifications!";
+        cout << "No record to delete";
 }
 
 int main()
@@ -308,7 +312,7 @@ int main()
     LoadData(fName, employees);
     backup(fName, bName);
     string id;
-    int service, z;
+    int service, MainIndex;
     do
     {
         menu();
@@ -329,17 +333,19 @@ int main()
         case 2:
             cout << "\nEnter the employee id who you want to find: ";
             cin >> id;
-            z = search(employees, id, NumOfEmployees); // no need for z
-            if (z == -1)
+            MainIndex = search(employees, id, NumOfEmployees);
+            if (MainIndex == -1)
+            {
+                cout << "We didn't finde an employee with the entered data" << endl;
                 break;
+            }
             else
             {
-                cout << "\nEmployee Name: " << employees[z].name;
-                cout << "\nEmployee ID: " << employees[z].id;
-                cout << "\nEmployee Age: " << employees[z].age;
-                cout << "\nEmployee gender: " << employees[z].gender;
-                cout << "\nEmployee job: " << employees[z].job;
-                cout << "\nEmployee salary: " << employees[z].salary;
+                cout << "\nEmployee Name: " << employees[MainIndex].name;
+                cout << "\nEmployee ID: " << employees[MainIndex].id;
+                cout << "\nEmployee Age: " << employees[MainIndex].age;
+                cout << "\nEmployee gender: " << employees[MainIndex].gender;
+                cout << "\nEmployee salary: " << employees[MainIndex].salary;
                 break;
             }
         case 3:

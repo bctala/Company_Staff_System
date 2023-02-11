@@ -106,7 +106,7 @@ void saveData(string oName, company employees[])
         cout << "\nFailed,Please Try Again.\n";
 }
 
-// Stat report (needs re-numbering)
+// Stat report
 void statical_report()
 {
     ofstream StatReport;
@@ -123,6 +123,7 @@ void statical_report()
         StatReport << "The user asked to update data: " << report[3] << " times" << endl;
         StatReport << "The user asked to sort data: " << report[4] << " times" << endl;
         StatReport << "The user asked to delete data: " << report[5] << " times" << endl;
+        StatReport << "The current number of staff is: " << NumOfEmployees << endl;
         StatReport << "The Date and time of the last update: " << time << endl;
         StatReport.close();
     }
@@ -139,15 +140,15 @@ int test(company employees[], string id, int NumOfEmployees)
             return i;
     return -1;
 }
-bool test()
+int test()
 {
     char result;
     cout << "\nDo you want to use another service? (enter Y for yes and N for no): ";
     cin >> result;
     if (result == 'N' || result == 'n')
-        return false;
+        return 0;
     else if (result == 'Y' || result == 'y')
-        return true;
+        return 1;
     else
     {
         cout << "Wrong input,please try again";
@@ -184,7 +185,9 @@ void displayData(company employees[])
         cout << "Age: " << employees[i].age << endl;
         cout << "Gender: " << employees[i].gender << endl;
         cout << "Salary: " << employees[i].salary << endl;
+        cout << "________________________________________________" << endl;
     }
+    cout << "staff: " << NumOfEmployees << endl;
 }
 
 // Adding a staff
@@ -202,7 +205,7 @@ void add(company employees[], int &NumOfEmployees)
     }
     employees[NumOfEmployees].id = id;
     cout << "Enter Name: ";
-    cin >> employees[NumOfEmployees].name;
+    getline(cin >> ws, employees[NumOfEmployees].name);
     cout << "Enter Age: ";
     cin >> employees[NumOfEmployees].age;
     cout << "Enter gender: ";
@@ -226,7 +229,7 @@ int search(company employees[], string id, int NumOfEmployees)
     }
     else
         cout << "There is no staff,try adding befor searching!" << endl;
-    return -1;
+    return -2;
 }
 
 // Updating info
@@ -260,20 +263,27 @@ void update(company employees[], string id, int NumOfEmployees)
 void sort(company employees[], int NumOfEmployees)
 {
     report[4]++;
+    bool done = 0;
     company temp;
     if (NumOfEmployees < 2)
-        cout << " There is nothing to be sorted! ";
+        cout << "There is nothing to sort" << endl;
     else
     {
-        for (int i = 0; i < NumOfEmployees - 1; i++)
+        for (int i = 0; i < NumOfEmployees - 1 && done == 0; i++)
+        {
+            done = 1;
             for (int j = 0; j < NumOfEmployees - 1; j++)
+            {
                 if (employees[j].salary > employees[j + 1].salary)
                 {
-                    temp.salary = employees[j].salary;
-                    employees[j].salary = employees[j + 1].salary;
-                    employees[j + 1].salary = temp.salary;
+                    done = 0;
+                    temp = employees[j + 1];
+                    employees[j + 1] = employees[j];
+                    employees[j] = temp;
                 }
-        cout << "Recored has been sorted by salary successfully!";
+            }
+        }
+        cout << "Records have been successfully sorted by salary!" << endl;
     }
 }
 
@@ -339,7 +349,7 @@ int main()
                 cout << "We didn't finde an employee with the entered data" << endl;
                 break;
             }
-            else
+            else if (MainIndex > -1)
             {
                 cout << "\nEmployee Name: " << employees[MainIndex].name;
                 cout << "\nEmployee ID: " << employees[MainIndex].id;
@@ -348,6 +358,8 @@ int main()
                 cout << "\nEmployee salary: " << employees[MainIndex].salary;
                 break;
             }
+            else
+                break;
         case 3:
             cout << "\nEnter the employee id who you want to update their job or salary: ";
             cin >> id;
